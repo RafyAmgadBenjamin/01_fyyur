@@ -13,6 +13,7 @@ from logging import Formatter, FileHandler
 from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
+import sys
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -433,13 +434,43 @@ def create_artist_form():
 @app.route('/artists/create', methods=['POST'])
 def create_artist_submission():
   # called upon submitting the new artist listing form
-  # TODO: insert form data as a new Venue record in the db, instead
-  # TODO: modify data to be the data object returned from db insertion
+  # TODO-Done: insert form data as a new Venue record in the db, instead 
+  artist_id = None
+  #flag to show if an error happened or not
+  is_error =False
+  try:
+    # mapping data from the request to the artist object
+    artist = Artist()
+    artist.name=request.form['name']
+    artist.city=request.form['city']
+    artist.state=request.form['state']
+    artist.phone=request.form['phone']
+    artist.genres= request.form['genres'] 
+    # artist.image_link=request.form['image_link']
+    artist.facebook_link=request.form['facebook_link']
+    db.session.add(artist)
+    db.session.commit()
+    artist_id = artist.id
+  except:
+    db.session.rollback()
+    is_error =True
+    print(sys.exc_info())
+  finally:
+    db.session.close()
 
-  # on successful db insert, flash success
-  flash('Artist ' + request.form['name'] + ' was successfully listed!')
-  # TODO: on unsuccessful db insert, flash an error instead.
-  # e.g., flash('An error occurred. Artist ' + data.name + ' could not be listed.')
+  # TODO-done: modify data to be the data object returned from db insertion
+  try:
+    artist_data = Artist.query.get(artist_id)
+  except:
+    print("Something wrong happened during retrieving the data from database")
+    
+
+  if  is_error:
+    # TODO-done: on unsuccessful db insert, flash an error instead.
+    flash('An error occurred. Artist ' + artist_data.name + ' could not be listed.')
+  else:
+    # on successful db insert, flash success
+    flash('Artist ' + request.form['name'] + ' was successfully listed!')
   return render_template('pages/home.html')
 
 
