@@ -536,7 +536,7 @@ def shows():
     tmp_show['artist_name'] = show.artist.name
     tmp_show['artist_image_link'] = show.artist.image_link
     tmp_show['start_time'] = show.start_time.isoformat()
-  data.append(tmp_show)
+    data.append(tmp_show)
 
   return render_template('pages/shows.html', shows=data)
 
