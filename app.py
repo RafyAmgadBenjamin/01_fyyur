@@ -283,7 +283,7 @@ def create_venue_submission():
     venue.facebook_link = request.form['facebook_link']
     venue.genres = request.form['genres']
     venue.website = request.form['website']
-    venue.seeking_talent = request.form['seeking_talent']
+    venue.seeking_talent = True if request.form.get('seeking_talent') and request.form.get('seeking_talent') == 'y' else False
     venue.seeking_description = request.form['seeking_description']
     db.session.add(venue)
     db.session.commit()
@@ -499,7 +499,7 @@ def create_artist_submission():
     artist.genres= request.form['genres'] 
     artist.image_link=request.form['image_link']
     artist.facebook_link=request.form['facebook_link']
-    artist.seeking_venue=request.form['seeking_venue']
+    artist.seeking_venue=True if request.form.get('seeking_venue') and request.form.get('seeking_venue') == 'y' else False
     artist.website=request.form['website']
     artist.seeking_description=request.form['seeking_description']
 

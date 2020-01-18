@@ -206,7 +206,7 @@ class ArtistForm(Form):
         validators=[URL()],
     )
 
-    seeking_venue = BooleanField("Seeking Venue?")
+    seeking_venue = BooleanField()
     seeking_description = TextAreaField("Seeking Description", validators=[Length(max=120)])
     website = StringField(
         # TODO implement enum restriction
