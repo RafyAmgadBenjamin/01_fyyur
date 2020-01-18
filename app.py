@@ -104,8 +104,8 @@ def get_upcomming_shows(venue):
   This is a function to get the number of upcomming shows related to this venue
   '''
   now = datetime.now()
-  current_time = now.strftime("%H:%M:%S")
-  shows = [ show for show in venue.shows if show.start_time >current_time]
+  current_time = now.strftime("%Y:%M:%D")
+  shows = [ show for show in venue.shows if show.start_time.strftime("%Y:%M:%D") >current_time]
   return len(shows)
 
 def create_venue_format(venue):
