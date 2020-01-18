@@ -14,6 +14,7 @@ from flask_wtf import Form
 from forms import *
 from flask_migrate import Migrate
 import sys
+from datetime import datetime
 
 #----------------------------------------------------------------------------#
 # App Config.
@@ -92,6 +93,30 @@ def format_datetime(value, format='medium'):
 
 app.jinja_env.filters['datetime'] = format_datetime
 
+
+
+#----------------------------------------------------------------------------#
+# Helper functions.
+#----------------------------------------------------------------------------#
+
+def get_upcomming_shows(venue):
+  '''
+  This is a function to get the number of upcomming shows related to this venue
+  '''
+  now = datetime.now()
+  current_time = now.strftime("%H:%M:%S")
+  shows = [ show for show in venue.shows if show.start_time >current_time]
+  return len(shows)
+
+def create_venue_format(venue):
+  '''
+  This function is to return the venue in the desired format to be rendered in the view
+  '''
+  venue_data = {}
+  venue_data['id'] = venue.id
+  venue_data['name']=venue.name
+  venue_data['num_upcoming_shows'] = get_upcomming_shows(venue)
+  return venue_data
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -106,9 +131,8 @@ def index():
 
 @app.route('/venues')
 def venues():
-  # TODO: replace with real venues data.
+  # TODO-done: replace with real venues data.
   # TODO: num_shows should be aggregated based on number of upcoming shows per venue.
-  # venues = Venue.query.group_by(Venue.city).all()
  
   venues = Venue.query.all()
   all_areas = [(venue.city,venue.state) for venue in venues ] 
@@ -121,12 +145,13 @@ def venues():
     tmp = {}
     tmp['city']=area[city_index]
     tmp['state']=area[state_index]
-    tmp['venues'] = [venue for venue in venues if venue.city == tmp['city'] and 
+    tmp['venues'] = [create_venue_format(venue) for venue in venues if venue.city == tmp['city'] and 
     venue.state == tmp['state']]
     data.append(tmp)
 
-
   return render_template('pages/venues.html', areas=data)
+
+
 
 @app.route('/venues/search', methods=['POST'])
 def search_venues():
