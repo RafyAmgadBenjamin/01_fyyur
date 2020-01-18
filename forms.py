@@ -100,6 +100,13 @@ class VenueForm(Form):
         ],
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
+    seeking_talent = BooleanField("Seeking Talent?")
+    seeking_description = TextAreaField("Seeking Description", validators=[Length(max=120)])
+    website = StringField(
+        # TODO implement enum restriction
+        "website",
+        validators=[URL()],
+    )
 
 
 class ArtistForm(Form):

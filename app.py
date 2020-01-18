@@ -46,7 +46,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
     genres = db.Column(db.String(120))
     website = db.Column(db.String(120))
-    seeking_venue = db.Column(db.Boolean,nullable=False,default=False)
+    seeking_talent = db.Column(db.Boolean,nullable=False,default=False)
     seeking_description = db.Column(db.String(120))
     shows = db.relationship("Show", backref="venue", lazy=True) 
     #Creating the one to many relation with the show class
@@ -281,6 +281,10 @@ def create_venue_submission():
     venue.phone = request.form['phone']
     venue.image_link= request.form['image_link']
     venue.facebook_link = request.form['facebook_link']
+    venue.genres = request.form['genres']
+    venue.website = request.form['website']
+    venue.seeking_talent = request.form['seeking_talent']
+    venue.seeking_description = request.form['seeking_description']
     db.session.add(venue)
     db.session.commit()
     venue_id = venue.id
@@ -495,6 +499,10 @@ def create_artist_submission():
     artist.genres= request.form['genres'] 
     artist.image_link=request.form['image_link']
     artist.facebook_link=request.form['facebook_link']
+    artist.seeking_venue=request.form['seeking_venue']
+    artist.website=request.form['website']
+    artist.seeking_description=request.form['seeking_description']
+
     db.session.add(artist)
     db.session.commit()
     artist_id = artist.id
