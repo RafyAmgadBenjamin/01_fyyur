@@ -129,7 +129,7 @@ def get_required_show_data(show):
   data['venue_id']=show.venue_id
   data['venue_name']=show.venue.name
   data['venue_image_link']=show.venue.image_link
-  data['start_time']= show.start_time.strftime("%Y:%M:%D")
+  data['start_time']= show.start_time
   return data
 
 
@@ -433,8 +433,8 @@ def show_artist(artist_id):
   data = vars(artist) #changin(casting) artist object to dictionary 
   now = datetime.now()
   current_time = now.strftime("%Y:%M:%D")
-  past_shows = [get_required_show_data(show) for show in artist.shows if show.start_time.strftime("%Y:%M:%D") < current_time] 
-  upcomming_shows = [get_required_show_data(show) for show in artist.shows if show.start_time.strftime("%Y:%M:%D") >= current_time] 
+  past_shows = [get_required_show_data(show) for show in artist.shows if show.start_time < datetime.today()] 
+  upcomming_shows = [get_required_show_data(show) for show in artist.shows if show.start_time >= datetime.today()] 
   data['past_shows'] = past_shows
   data['upcoming_shows'] = upcomming_shows
   data['past_shows_count'] = len(past_shows)
