@@ -48,7 +48,7 @@ class Venue(db.Model):
     website = db.Column(db.String(120))
     seeking_talent = db.Column(db.Boolean,nullable=False,default=False)
     seeking_description = db.Column(db.String(120))
-    shows = db.relationship("Show", backref="venue", lazy=True, passive_deletes=True) 
+    shows = db.relationship("Show", backref="venue", lazy=True) 
     #Creating the one to many relation with the show class
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
@@ -347,6 +347,8 @@ def delete_venue(venue_id):
   # TODO: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
   try:
+    #TODO: i have to make it using cascading
+    Show.query.filter_by(venue_id =venue_id).delete()
     Venue.query.filter_by(id=venue_id).delete()
     db.session.commit()
   except:
@@ -355,7 +357,7 @@ def delete_venue(venue_id):
     db.session.close()
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return None
+  return (url_for('index'))
 
 #  Artists
 #  ----------------------------------------------------------------

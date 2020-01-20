@@ -83,13 +83,17 @@
 </div>
 {% endblock %}
 
+{%block my_script%}
 <script>
-	document.getElementById('delete-btn').onclick = funciton(e){
+	document.getElementById('delete-btn').onclick = function (e) {
+		e.preventDefault();
 		const venueId = e.target.dataset['id'];
 		fetch('/venues/' + venueId, { method: 'DELETE' }).then(function () {
 			console.log("Deleted successfully");
+			window.location.replace("/");
 		}).catch(function () {
 			console.log("Error happened on deletion");
 		})
 	}
 </script>
+{%endblock%}
