@@ -214,6 +214,9 @@ def show_venue(venue_id):
   # TODO-done: replace with real venue data from the venues table, using venue_id
   
   venue = Venue.query.get(venue_id)
+  #splitting the genres in order to loop on them in the front-end
+  tmp_genres = venue.genres.split(',')
+  venue.genres = tmp_genres
   data = vars(venue) #changin(casting) venue object to dictionary 
   past_shows = [format_show_data_for_venue(show) for show in venue.shows if show.start_time < datetime.today()] 
   upcomming_shows = [format_show_data_for_venue(show) for show in venue.shows if show.start_time >= datetime.today()] 
@@ -247,7 +250,9 @@ def create_venue_submission():
     venue.phone = request.form['phone']
     venue.image_link= request.form['image_link']
     venue.facebook_link = request.form['facebook_link']
-    venue.genres = request.form['genres']
+    tmp_genres= request.form.getlist('genres')
+    #Joining genres together in one string to be stored in DB 
+    venue.genres = ','.join(tmp_genres)
     venue.website = request.form['website']
     venue.seeking_talent = True if request.form.get('seeking_talent') and request.form.get('seeking_talent') == 'y' else False
     venue.seeking_description = request.form['seeking_description']
@@ -325,6 +330,7 @@ def show_artist(artist_id):
   # TODO-done: replace with real venue data from the venues table, using venue_id
   
   artist = Artist.query.get(artist_id)
+  #splitting the genres in order to loop on them in the front-end
   tmp_genres = artist.genres.split(',')
   artist.genres = tmp_genres
   data = vars(artist) #changin(casting) artist object to dictionary 
@@ -365,7 +371,8 @@ def edit_artist_submission(artist_id):
     artist.city=request.form['city']
     artist.state=request.form['state']
     artist.phone=request.form['phone']
-    artist.genres= request.form['genres'] 
+    tmp_genres= request.form.getlist('genres') 
+    artist.genres= ','.join(tmp_genres) 
     artist.image_link=request.form['image_link']
     artist.facebook_link=request.form['facebook_link']
     artist.seeking_venue=True if request.form.get('seeking_venue') and (request.form.get('seeking_venue') == 'y' or request.form.get('seeking_venue') == 'on') else False
@@ -406,7 +413,8 @@ def edit_venue_submission(venue_id):
     venue.phone = request.form['phone']
     venue.image_link= request.form['image_link']
     venue.facebook_link = request.form['facebook_link']
-    venue.genres = request.form['genres']
+    tmp_genres= request.form.getlist('genres') 
+    venue.genres = ','.join(tmp_genres)
     venue.website = request.form['website']
     venue.seeking_talent = True if request.form.get('seeking_talent') and (request.form.get('seeking_talent') == 'y' or  request.form.get('seeking_venue') == 'on') else False
     venue.seeking_description = request.form['seeking_description']
@@ -441,6 +449,7 @@ def create_artist_submission():
     artist.state=request.form['state']
     artist.phone=request.form['phone']
     tmp_genres= request.form.getlist('genres') 
+    #Joining genres together in one string to be stored in DB
     artist.genres = ','.join(tmp_genres)
     artist.image_link=request.form['image_link']
     artist.facebook_link=request.form['facebook_link']
