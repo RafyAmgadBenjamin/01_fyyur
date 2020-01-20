@@ -145,14 +145,14 @@ def format_show_data_for_venue(show):
   data['artist_image_link']=show.artist.image_link
   data['start_time']= str(show.start_time)
   return data
-def format_artist_data_for_search(artist):
+def format_data_for_search(search_element):
   """
-    Format the artist data to be in the desired format to be rendered in the search 
+    Format the data to be in the desired format to be rendered in the search 
   """
   data = {}
-  data['id']= artist.id
-  data['name']=artist.name
-  data['num_upcoming_shows']= len(artist.shows)
+  data['id']= search_element.id
+  data['name']=search_element.name
+  data['num_upcoming_shows']= len(search_element.shows)
   return data
 #----------------------------------------------------------------------------#
 # Controllers.
@@ -195,20 +195,30 @@ def search_venues():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for Hop should return "The Musical Hop".
   # search for "Music" should return "The Musical Hop" and "Park Square Live Music & Coffee"
-  response={
-    "count": 1,
-    "data": [{
-      "id": 2,
-      "name": "The Dueling Pianos Bar",
-      "num_upcoming_shows": 0,
-    }]
-  }
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 2,
+  #     "name": "The Dueling Pianos Bar",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
+  search_term=request.form.get('search_term', '')
+  search_term=search_term.strip()  #removing the spaces form the beginning and the end
+  search_query = '%{0}%'.format(search_term) # prepare the query 
+  results = Venue.query.filter(Venue.name.ilike(search_query)).all()
+  venue_data= [format_data_for_search(venue) for venue in results]
+  #Format the data to be in the desired format
+  response = {}
+  response['count']= len(results)
+  response['data'] = venue_data
+
   return render_template('pages/search_venues.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/venues/<int:venue_id>')
 def show_venue(venue_id):
   # shows the venue page with the given venue_id
-  # TODO: replace with real venue data from the venues table, using venue_id
+  # TODO-done: replace with real venue data from the venues table, using venue_id
   # data1={
   #   "id": 1,
   #   "name": "The Musical Hop",
@@ -385,7 +395,7 @@ def search_artists():
   search_term=search_term.strip()  #removing the spaces form the beginning and the end
   search_query = '%{0}%'.format(search_term) # prepare the query 
   results = Artist.query.filter(Artist.name.ilike(search_query)).all()
-  artist_data= [  format_artist_data_for_search(artist) for artist in results]
+  artist_data= [format_data_for_search(artist) for artist in results]
   #Format the data to be in the desired format
   response = {}
   response['count']= len(results)
