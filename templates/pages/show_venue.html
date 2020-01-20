@@ -78,9 +78,13 @@
 		{% endfor %}
 	</div>
 </section>
-<div>
-	<input type="button" data-id={{venue.id}} id="delete-btn" value="Delete Venue" class="btn btn-primary btn-lg">
+<div class="h1">
+	<input type="button" data-id={{venue.id}} id="edit-btn" value="Edit Venue" class="btn btn-primary btn-lg">
 </div>
+<div>
+	<input type="button" data-id={{venue.id}} id="delete-btn" value="Delete Venue" class="btn btn-danger btn-lg">
+</div>
+
 {% endblock %}
 
 {%block my_script%}
@@ -94,6 +98,11 @@
 		}).catch(function () {
 			console.log("Error happened on deletion");
 		})
+	}
+	document.getElementById('edit-btn').onclick = function (e) {
+		e.preventDefault();
+		const venueId = e.target.dataset['id'];
+		window.location.replace('/venues/' + venueId + '/edit');
 	}
 </script>
 {%endblock%}
