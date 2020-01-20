@@ -404,12 +404,33 @@ def edit_artist(artist_id):
   form.seeking_description.data = artist.seeking_description
   form.seeking_venue.data = artist.seeking_venue
   form.genres.data = artist.genres
+  form.state.data= artist.state
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
 @app.route('/artists/<int:artist_id>/edit', methods=['POST'])
 def edit_artist_submission(artist_id):
-  # TODO: take values from the form submitted, and update existing
+  # TODO-done: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
+  try:
+    # mapping data from the request to the artist object
+    artist = Artist.query.get(artist_id)
+    artist.name=request.form['name']
+    artist.city=request.form['city']
+    artist.state=request.form['state']
+    artist.phone=request.form['phone']
+    artist.genres= request.form['genres'] 
+    artist.image_link=request.form['image_link']
+    artist.facebook_link=request.form['facebook_link']
+    artist.seeking_venue=True if request.form.get('seeking_venue') and (request.form.get('seeking_venue') == 'y' or request.form.get('seeking_venue') == 'on') else False
+    artist.website=request.form['website']
+    artist.seeking_description=request.form['seeking_description']
+
+    db.session.commit()
+  except:
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
 
   return redirect(url_for('show_artist', artist_id=artist_id))
 
