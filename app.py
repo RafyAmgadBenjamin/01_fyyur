@@ -325,6 +325,8 @@ def show_artist(artist_id):
   # TODO-done: replace with real venue data from the venues table, using venue_id
   
   artist = Artist.query.get(artist_id)
+  tmp_genres = artist.genres.split(',')
+  artist.genres = tmp_genres
   data = vars(artist) #changin(casting) artist object to dictionary 
   now = datetime.now()
   current_time = now.strftime("%Y:%M:%D")
@@ -438,7 +440,8 @@ def create_artist_submission():
     artist.city=request.form['city']
     artist.state=request.form['state']
     artist.phone=request.form['phone']
-    artist.genres= request.form['genres'] 
+    tmp_genres= request.form.getlist('genres') 
+    artist.genres = ','.join(tmp_genres)
     artist.image_link=request.form['image_link']
     artist.facebook_link=request.form['facebook_link']
     artist.seeking_venue=True if request.form.get('seeking_venue') and request.form.get('seeking_venue') == 'y' else False
