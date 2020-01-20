@@ -145,7 +145,15 @@ def format_show_data_for_venue(show):
   data['artist_image_link']=show.artist.image_link
   data['start_time']= str(show.start_time)
   return data
-
+def format_artist_data_for_search(artist):
+  """
+    Format the artist data to be in the desired format to be rendered in the search 
+  """
+  data = {}
+  data['id']= artist.id
+  data['name']=artist.name
+  data['num_upcoming_shows']= len(artist.shows)
+  return data
 #----------------------------------------------------------------------------#
 # Controllers.
 #----------------------------------------------------------------------------#
@@ -372,14 +380,24 @@ def search_artists():
   # TODO: implement search on artists with partial string search. Ensure it is case-insensitive.
   # seach for "A" should return "Guns N Petals", "Matt Quevado", and "The Wild Sax Band".
   # search for "band" should return "The Wild Sax Band".
-  response={
-    "count": 1,
-    "data": [{
-      "id": 4,
-      "name": "Guns N Petals",
-      "num_upcoming_shows": 0,
-    }]
-  }
+  # response={
+  #   "count": 1,
+  #   "data": [{
+  #     "id": 4,
+  #     "name": "Guns N Petals",
+  #     "num_upcoming_shows": 0,
+  #   }]
+  # }
+  search_term=request.form.get('search_term', '')
+  search_term=search_term.strip()  #removing the spaces form the beginning and the end
+  search_query = '%{0}%'.format(search_term) # prepare the query 
+  results = Artist.query.filter(Artist.name.ilike(search_query)).all()
+  artist_data= [  format_artist_data_for_search(artist) for artist in results]
+  #Format the data to be in the desired format
+  response = {}
+  response['count']= len(results)
+  response['data'] = artist_data
+
   return render_template('pages/search_artists.html', results=response, search_term=request.form.get('search_term', ''))
 
 @app.route('/artists/<int:artist_id>')
