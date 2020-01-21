@@ -20,6 +20,13 @@ class ShowForm(Form):
 
 
 class VenueForm(Form):
+    def validate_phone(form, field):
+        # applied regular expression
+        # phone must be in format 000-000-0000
+        regex = "\w{3}-\w{3}-\w{4}"
+        if not re.search(regex, field.data):
+            raise ValidationError("Invalid phone number.")
+
     name = StringField("name", validators=[DataRequired()])
     city = StringField("city", validators=[DataRequired()])
     state = SelectField(
