@@ -15,12 +15,15 @@ from forms import *
 from flask_migrate import Migrate
 import sys
 from datetime import datetime
+from flask_wtf.csrf import CSRFProtect
+
 
 #----------------------------------------------------------------------------#
 # App Config.
 #----------------------------------------------------------------------------#
 
 app = Flask(__name__)
+csrf = CSRFProtect() #enabling CRF to be able to validate the form in the right way
 moment = Moment(app)
 app.config.from_object('config')
 db = SQLAlchemy(app)
@@ -438,36 +441,41 @@ def create_artist_form():
 def create_artist_submission():
   # called upon submitting the new artist listing form
   # TODO-Done: insert form data as a new Venue record in the db, instead 
+  artist_form = ArtistForm(request.form)
   artist_id = None
   #flag to show if an error happened or not
   is_error =False
-  try:
-    # mapping data from the request to the artist object
-    artist = Artist()
-    artist.name=request.form['name']
-    artist.city=request.form['city']
-    artist.state=request.form['state']
-    artist.phone=request.form['phone']
-    tmp_genres= request.form.getlist('genres') 
-    #Joining genres together in one string to be stored in DB
-    artist.genres = ','.join(tmp_genres)
-    artist.image_link=request.form['image_link']
-    artist.facebook_link=request.form['facebook_link']
-    artist.seeking_venue=True if request.form.get('seeking_venue') and request.form.get('seeking_venue') == 'y' else False
-    artist.website=request.form['website']
-    artist.seeking_description=request.form['seeking_description']
+  if artist_form.validate():
+    try:
+      # mapping data from the request to the artist object
+      artist = Artist()
+      artist.name=request.form['name']
+      artist.city=request.form['city']
+      artist.state=request.form['state']
+      artist.phone=request.form['phone']
+      tmp_genres= request.form.getlist('genres') 
+      #Joining genres together in one string to be stored in DB
+      artist.genres = ','.join(tmp_genres)
+      artist.image_link=request.form['image_link']
+      artist.facebook_link=request.form['facebook_link']
+      artist.seeking_venue=True if request.form.get('seeking_venue') and request.form.get('seeking_venue') == 'y' else False
+      artist.website=request.form['website']
+      artist.seeking_description=request.form['seeking_description']
 
-    db.session.add(artist)
-    db.session.commit()
-    artist_id = artist.id
-  except:
-    db.session.rollback()
-    is_error =True
-    print(sys.exc_info())
-  finally:
-    db.session.close()
-
-  # TODO-done: modify data to be the data object returned from db insertion
+      db.session.add(artist)
+      db.session.commit()
+      artist_id = artist.id
+    except:
+      db.session.rollback()
+      is_error =True
+      print(sys.exc_info())
+    finally:
+      db.session.close()
+  else :
+    #in case the form doesn't contain a valid data
+     print(artist_form.errors)
+     return render_template('errors/500.html'), 500
+       # TODO-done: modify data to be the data object returned from db insertion
   try:
     artist_data = Artist.query.get(artist_id)
   except:
