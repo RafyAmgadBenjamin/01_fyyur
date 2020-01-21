@@ -16,7 +16,9 @@ import re
 class ShowForm(Form):
     artist_id = StringField("artist_id")
     venue_id = StringField("venue_id")
-    start_time = DateTimeField("start_time", validators=[DataRequired()], default=datetime.today())
+    start_time = DateTimeField(
+        "start_time", validators=[DataRequired()], default=datetime.today()
+    )
 
 
 class VenueForm(Form):
@@ -117,7 +119,9 @@ class VenueForm(Form):
     )
     facebook_link = StringField("facebook_link", validators=[URL()])
     seeking_talent = BooleanField("Seeking Talent?")
-    seeking_description = TextAreaField("Seeking Description", validators=[Length(max=120)])
+    seeking_description = TextAreaField(
+        "Seeking Description", validators=[Length(max=120)]
+    )
     website = StringField(
         # TODO implement enum restriction
         "website",
@@ -231,7 +235,9 @@ class ArtistForm(Form):
     )
 
     seeking_venue = BooleanField()
-    seeking_description = TextAreaField("Seeking Description", validators=[Length(max=120)])
+    seeking_description = TextAreaField(
+        "Seeking Description", validators=[Length(max=120)]
+    )
     website = StringField(
         # TODO implement enum restriction
         "website",
