@@ -27,7 +27,7 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)  # migrations instantiation
 
 
-# TODO: connect to a local postgresql database
+# TODO-done: connect to a local postgresql database
 
 #----------------------------------------------------------------------------#
 # Models.
@@ -51,7 +51,7 @@ class Venue(db.Model):
     shows = db.relationship("Show", backref="venue", lazy=True) 
     #Creating the one to many relation with the show class
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # TODO-done: implement any missing fields, as a database migration using Flask-Migrate
 
 class Artist(db.Model):
     __tablename__ = 'Artist'
@@ -70,9 +70,9 @@ class Artist(db.Model):
     #Creating the one to many relation with the show class
     shows = db.relationship("Show", backref="artist", lazy=True) 
 
-    # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    # TODO-done: implement any missing fields, as a database migration using Flask-Migrate
 
-# TODO Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
+# TODO-done Implement Show and Artist models, and complete all model relationships and properties, as a database migration.
 
 class Show(db.Model):
   __tablename__='Show'
@@ -169,7 +169,7 @@ def index():
 @app.route('/venues')
 def venues():
   # TODO-done: replace with real venues data.
-  # TODO: num_shows should be aggregated based on number of upcoming shows per venue.
+  # TODO-done: num_shows should be aggregated based on number of upcoming shows per venue.
  
   venues = Venue.query.all()
   all_areas = [(venue.city,venue.state) for venue in venues ] 
@@ -283,7 +283,7 @@ def create_venue_submission():
 
 @app.route('/venues/<venue_id>', methods=['DELETE'])
 def delete_venue(venue_id):
-  # TODO: Complete this endpoint for taking a venue_id, and using
+  # TODO-done: Complete this endpoint for taking a venue_id, and using
   # SQLAlchemy ORM to delete a record. Handle cases where the session commit could fail.
   try:
     #TODO: i have to make it using cascading
@@ -296,7 +296,7 @@ def delete_venue(venue_id):
     db.session.close()
   # BONUS CHALLENGE: Implement a button to delete a Venue on a Venue Page, have it so that
   # clicking that button delete it from the db then redirect the user to the homepage
-  return (url_for('index'))
+  return None
 
 #  Artists
 #  ----------------------------------------------------------------
